@@ -1,14 +1,28 @@
 import axios from "axios";
 import { fetchRequest, fetchRequestFail } from "../../redux/general-actions";
-import { fetchUsers } from "../../redux/user/actions";
+import { fetchAllUsers, fetchUser } from "../../redux/user/actions";
 
 export const Userlist = () => {
-    return (dispatch) => {
+    return async (dispatch) => {
         dispatch(fetchRequest())
-        axios.get("https://jsonplaceholder.typicode.com/users")
+        await axios.get("https://jsonplaceholder.typicode.com/users")
         .then(response => {
             const users = response.data;
-            dispatch(fetchUsers(users))
+            dispatch(fetchAllUsers(users))
+        })
+        .catch(error => {
+            dispatch(fetchRequestFail(error.message))
+        })
+    }
+}
+
+export const UserData = (id) => {
+    return async (dispatch) => {
+        dispatch(fetchRequest())
+        await axios.get(`https://jsonplaceholder.typicode.com/users/${id}`)
+        .then(response => {
+            const user = response.data;
+            dispatch(fetchUser(user))
         })
         .catch(error => {
             dispatch(fetchRequestFail(error.message))
